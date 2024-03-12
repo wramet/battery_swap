@@ -71,9 +71,9 @@ async def main():
 
     sink = InfluxDBSink(
         url="https://us-east-1-1.aws.cloud2.influxdata.com",
-        token="fW1xd1DW6LLyJFh77BNVqrkzkUaY5ofaZG2MlhZQdLkOrxDRUPhGK_Xlz9oCaP1x5jV067nCrUzTxOsMI7dyIA==",
+        token="8KcwFmBCTahxXRbq9gsjHTfHmHfSUgw2f8Ym78zXidI3hk9VShc97zL81Hu36_DBVy5q35heEBzt_-CAO3pNZA==",
         org="Benz",
-        bucket="test"
+        bucket="test_mark2"
     )
 
     batteries_samples = {
