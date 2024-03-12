@@ -1,0 +1,27 @@
+{
+    "serial_control_config": {
+      "port": "COM10",
+      "baudrate": 9600,
+      "timeout": 1
+    },
+    "serial_battery_config": {
+      "port": "COM9",
+      "baudrate": 9600,
+      "timeout": 1
+    },
+    "sink_config": {
+      "url": "https://us-east-1-1.aws.cloud2.influxdata.com",
+      "token": "8KcwFmBCTahxXRbq9gsjHTfHmHfSUgw2f8Ym78zXidI3hk9VShc97zL81Hu36_DBVy5q35heEBzt_-CAO3pNZA==",
+      "org": "Benz",
+      "bucket": "test_mark2"
+    },
+    "fan_control_config": {
+      "fan_on_temp_threshold": 35,
+      "fan_off_temp_threshold": 25
+    },
+    "battery_config": {
+      "max_batteries": 1,
+      "max_soc": 50
+    }
+  }
+  
