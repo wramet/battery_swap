@@ -77,8 +77,8 @@ async def main():
     )
 
     batteries_samples = {
-    1: BmsSample(voltage=60.3, current=0, charge=5.3, num_cycles=5, soc=77, mos_temperature=[25.5, 28.3]),
-    2: BmsSample(voltage=50.3, current=3.6, charge=18.9, num_cycles=5, soc=88, mos_temperature=[22.4, 26.2]),
+    1: BmsSample(voltage=60.3, current=0, charge=5.3, num_cycles=5, soc=30, mos_temperature=[25.5, 28.3]),
+    2: BmsSample(voltage=50.3, current=3.6, charge=18.9, num_cycles=5, soc=36, mos_temperature=[22.4, 26.2]),
     3: BmsSample(voltage=48.1, current=-4.2, charge=12.5, num_cycles=10, soc=99, mos_temperature=[24.1, 27.5]),
     4: BmsSample(),
     5: BmsSample(voltage=55.2, current=4.5, charge=10.2, num_cycles=7, soc=47, mos_temperature=[21.9, 24.6]),

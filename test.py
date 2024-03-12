@@ -163,21 +163,7 @@ class JbdBms(SerialConnection):
 
 
 async def main():
-
-
-    bms = SerialConnection()
-    await bms.connect(port= "COM9")
-    await bms.control_fan(1, "ON")
-    #data_after = await bms.fetch_basic()
-    #print(data_after.switches)
-    #voltage = await bms.fetch_voltages()
-    #print(voltage)
-
-    bms.disconnect()
-    #fan7_on = bms.control_fan(7,"ON")
-    #print(fan7_on)
-    #fan9_off = bms.control_fan(9,"OFF")
-    #print(fan9_off)
+    print("hello")
 
 if __name__ == '__main__':
     asyncio.run(main())

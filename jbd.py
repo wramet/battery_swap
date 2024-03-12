@@ -150,7 +150,7 @@ class JbdBms(SerialConnection):
 
 
 async def main():
-    mock_serial = JbdBms(port = "COM9")
+    mock_serial = JbdBms(port = "/dev/ttyUSB0")
     """
     await mock_serial.connect()  # Ensure this is awaited
     batteries_samples = {

@@ -1,11 +1,11 @@
 {
     "serial_control_config": {
-      "port": "COM10",
+      "port": "/dev/ttyACM0",
       "baudrate": 9600,
       "timeout": 1
     },
     "serial_battery_config": {
-      "port": "COM9",
+      "port": "/dev/ttyUSB0",
       "baudrate": 9600,
       "timeout": 1
     },
@@ -21,7 +21,7 @@
     },
     "battery_config": {
       "max_batteries": 1,
-      "max_soc": 50
+      "max_soc": 30
     }
   }
   

@@ -165,7 +165,7 @@ async def start_uvicorn():
     cmd,
     stdout=asyncio.subprocess.PIPE,
     stderr=asyncio.subprocess.PIPE,
-    cwd=r'D:\Batterry_swap\BMS'
+    cwd=r'/home/pi/projects/bss-station'
 )
 
     # Logging stdout and stderr
@@ -197,7 +197,7 @@ async def start_react_dev_server():
     'npm run dev',
     stdout=asyncio.subprocess.PIPE,
     stderr=asyncio.subprocess.PIPE,
-    cwd=r'D:\dashboard\material-tailwind-dashboard-react'
+    cwd=r'/home/pi/projects/bss-React_web'
 )
 
     # Optionally, log stdout and stderr from the React development server
