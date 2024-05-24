@@ -7,17 +7,24 @@ import certifi
 import concurrent.futures
 from functools import partial
 import time
-import pandas as pd
-import random
+import json
+
+with open('config.json', 'r') as config_file:
+        config = json.load(config_file)
 
 class InfluxDBSink:
 
     logger = get_logger(__name__)
 
-    def __init__(self, url: str, token: str, org: str, bucket: str):
+    def __init__(self):
         with open(certifi.where(), "r") as fh:
             cert = fh.read()
-
+            
+        sink_config = config['sink_config']
+        url = sink_config['url']
+        token = sink_config['token'] 
+        org = sink_config['org']
+        bucket = sink_config['bucket']
 
         self.client = InfluxDBClient3(
             host=url, 
@@ -65,31 +72,3 @@ class InfluxDBSink:
             self.logger.error(f"Failed to write voltage data points: {e}")
 
 
-
-async def main():
-
-
-    sink = InfluxDBSink(
-        url="https://us-east-1-1.aws.cloud2.influxdata.com",
-        token="8KcwFmBCTahxXRbq9gsjHTfHmHfSUgw2f8Ym78zXidI3hk9VShc97zL81Hu36_DBVy5q35heEBzt_-CAO3pNZA==",
-        org="Benz",
-        bucket="test_mark2"
-    )
-
-    batteries_samples = {
-    1: BmsSample(voltage=60.3, current=0, charge=5.3, num_cycles=5, soc=77, mos_temperature=[25.5, 28.3]),
-    2: BmsSample(voltage=50.3, current=3.6, charge=18.9, num_cycles=5, soc=88, mos_temperature=[22.4, 26.2]),
-    3: BmsSample(voltage=48.1, current=-4.2, charge=12.5, num_cycles=10, soc=99, mos_temperature=[24.1, 27.5]),
-    4: BmsSample(),
-    5: BmsSample(voltage=55.2, current=4.5, charge=10.2, num_cycles=7, soc=47, mos_temperature=[21.9, 24.6]),
-    6: BmsSample(voltage=52.7, current=0, charge=15.3, num_cycles=8, soc=95, mos_temperature=[23.3, 25.8]),
-    7: BmsSample(voltage=58.6, current=0, charge=8.4, num_cycles=6, soc=86, mos_temperature=[26.2, 29.4]),
-    8: BmsSample(voltage=47.3, current=3.2, charge=17.6, num_cycles=11, soc=77, mos_temperature=[23.8, 27.1]),
-    9: BmsSample(voltage=56.9, current=4.7, charge=9.8, num_cycles=4, soc=27, mos_temperature=[24.4, 28.0]),
-    10: BmsSample(voltage=53.4, current=4.0, charge=14.2, num_cycles=12, soc=82, mos_temperature=[25.1, 27.8]),
-}
-    
-    await sink.publish_sample(batteries_samples)
-
-if __name__ == '__main__':
-    asyncio.run(main())

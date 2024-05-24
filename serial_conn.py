@@ -62,7 +62,11 @@ async def main():
     print(res)
     bms_connection.disconnect()
     """
+<<<<<<< HEAD
     serial = SerialConnection(port = "COM8")
+=======
+    serial = SerialConnection(port = "/dev/ttyUSB0")
+>>>>>>> 3493b204b7995ecb2f1bccdf5781c5116a6b201a
     await serial.connect()
     command = bytes([0xDD, 0xA5,0x03, 0x00, 0xFF, 0xFD, 0x77])
     while True:
