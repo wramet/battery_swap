@@ -15,23 +15,23 @@ logger = get_logger()
 
 class BssStation:
 
-    BATTERY_ID = None
+    BATTERY_ID = 1
 
     def __init__(self, **kwargs):
         self.MAX_BATTERIES = kwargs['battery_config']['max_batteries']
-        self.MAX_SOC = kwargs['battery_config']['max_soc']
-        self.MIN_TEMP = kwargs['fan_control_config']['fan_off_temp_threshold']
-        self.MAX_TEMP = kwargs['fan_control_config']['fan_on_temp_threshold']
+        #self.MAX_SOC = kwargs['battery_config']['max_soc']
+        #self.MIN_TEMP = kwargs['fan_control_config']['fan_off_temp_threshold']
+        #self.MAX_TEMP = kwargs['fan_control_config']['fan_on_temp_threshold']
         self.batteries_samples: Dict[int, BmsSample] = {}
         self.batteries_voltages: Dict[int, List] = {}
         self.serial_battery = JbdBms(**kwargs['serial_battery_config'])
-        self.serial_control = aioserial.AioSerial(**kwargs['serial_control_config'])
+        #self.serial_control = aioserial.AioSerial(**kwargs['serial_control_config'])
         self.lock = asyncio.Lock()
         self.logger = logger
         self.sink = InfluxDBSink(**kwargs['sink_config'])
         self.charging_battery = {}
         self.update_event = asyncio.Event()
-        self.fan_statuses = {battery_id: "OFF" for battery_id in range(1, 11)}
+        #self.fan_statuses = {battery_id: "OFF" for battery_id in range(1, 11)}
 
     async def update_sample(self):
         new_sample: BmsSample = await self.serial_battery.fetch_basic()
@@ -59,7 +59,7 @@ class BssStation:
                     self.logger.error(f"Error publishing data to InfluxDB: {e}")
             # Wait for the event to be set or for the timeout
             try:
-                await asyncio.wait_for(self.update_event.wait(), timeout=15)
+                await asyncio.wait_for(self.update_event.wait(), timeout=10)
             except asyncio.TimeoutError:
                 pass  # Timeout occurred, proceed with the next iteration
             finally:
@@ -67,6 +67,7 @@ class BssStation:
             if shutdown:  
                 break
 
+    """    
     async def listen_controllino(self):
         while not shutdown:
             self.charging_battery = {id: sample for id, sample in self.batteries_samples.items() if not isnan(sample.voltage)}
@@ -76,7 +77,9 @@ class BssStation:
                 await self.handle_message(message)
             if shutdown: 
                 break
+            """
 
+    """    
     async def handle_message(self, message: str):
         async with self.lock:
             match = re.search(r'Limit switch (\d+) activated', message)
@@ -138,15 +141,16 @@ class BssStation:
             await asyncio.sleep(30)  # Properly await the sleep coroutine
             if shutdown: 
                 break
+            """
 
 
     async def main(self):
         fetch_log_task = asyncio.create_task(self.fetch_and_log_battery_loop())
-        listen_task = asyncio.create_task(self.listen_controllino())
-        uvicorn_task = asyncio.create_task(start_uvicorn())
-        react_task = asyncio.create_task(start_react_dev_server())
+        #listen_task = asyncio.create_task(self.listen_controllino())
+        #uvicorn_task = asyncio.create_task(start_uvicorn())
+        #react_task = asyncio.create_task(start_react_dev_server())
         #fan_task = asyncio.create_task(self.control_fan())
-        await asyncio.gather(fetch_log_task, listen_task, uvicorn_task,react_task)
+        await asyncio.gather(fetch_log_task)
 
 
 def signal_handler(signum, frame):
