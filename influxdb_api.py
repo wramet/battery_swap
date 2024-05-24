@@ -13,10 +13,7 @@ app.add_middleware(
 )
 
 
-sink = InfluxDBSink(url="https://us-east-1-1.aws.cloud2.influxdata.com",
-                    token="8KcwFmBCTahxXRbq9gsjHTfHmHfSUgw2f8Ym78zXidI3hk9VShc97zL81Hu36_DBVy5q35heEBzt_-CAO3pNZA==",
-                    org="Benz",
-                    bucket="test_mark2")
+sink = InfluxDBSink()
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):

@@ -127,16 +127,14 @@ class JbdBms(SerialConnection):
 
 
     async def control_fan(self,fan_position : int, state:str):
-        # คำนวณหมายเลขโมดูลและหมายเลขรีเลย์
         module_address = 0x01 + (fan_position - 1) // 8  # พัดลม 4 ตัวต่อโมดูล
         relay_number = (fan_position - 1) % 8
         function_code = 0x05
 
-        # ส่งคำสั่งเพื่อเปิดหรือปิดรีเลย์
         if state == "ON":
-            command = 0xFF00  # คำสั่งเปิดรีเลย์
+            command = 0xFF00 
         else:
-            command = 0x0000  # คำสั่งปิดรีเลย์
+            command = 0x0000  
 
         frame_without_crc = bytearray([module_address, function_code]) + \
                         bytearray([(relay_number >> 8) & 0xFF, relay_number & 0xFF]) + \
@@ -150,58 +148,7 @@ class JbdBms(SerialConnection):
 
 
 async def main():
-    mock_serial = JbdBms(port = "/dev/ttyUSB0")
-    """
-    await mock_serial.connect()  # Ensure this is awaited
-    batteries_samples = {
-    1: BmsSample(voltage=60.3, current=0, charge=5.3, num_cycles=5, soc=100, mos_temperature=[36.5, 34.2]),
-    2: BmsSample(voltage=60.0, current=1.0, charge=5.0, num_cycles=10, soc=95, mos_temperature=[30.1, 29.9]),
-    3: BmsSample(voltage=59.0, current=1.5, charge=4.5, num_cycles=15, soc=90, mos_temperature=[25.5, 26.1]),
-    4: BmsSample(voltage=58.5, current=2.0, charge=4.0, num_cycles=20, soc=85, mos_temperature=[15.0, 15.5]),
-    5: BmsSample(voltage=58.0, current=2.5, charge=3.5, num_cycles=25, soc=80, mos_temperature=[35.2, 19.8]),
-    6: BmsSample(voltage=57.5, current=3.0, charge=3.0, num_cycles=30, soc=75, mos_temperature=[27.5, 27.5]),
-    7: BmsSample(voltage=57.0, current=3.5, charge=2.5, num_cycles=35, soc=70, mos_temperature=[28.0, 29.0]),
-    8: BmsSample(voltage=56.5, current=4.0, charge=2.0, num_cycles=40, soc=65, mos_temperature=[33.5, 32.0]),
-}
-    fan_statuses = {i: "OFF" for i in range(1,9)}
-    MAX_TEMP = 30
-    MIN_TEMP = 20
-    while True:
-        try:
-            for battery_id, sample in batteries_samples.items():
-                max_temp = max(sample.mos_temperature)
-                current_status = fan_statuses[battery_id]
-                print(battery_id, max_temp)
-
-                if max_temp > MAX_TEMP and current_status != "ON":
-                    await mock_serial.control_fan(battery_id, "ON")
-                    fan_statuses[battery_id] = "ON"
-
-                elif max_temp < MIN_TEMP and current_status != "OFF":
-                    await mock_serial.control_fan(battery_id, "OFF")
-                    fan_statuses[battery_id] = "OFF"
-
-            # Introduce fluctuation in the next iteration to potentially change the fan state
-            if fan_statuses[battery_id] == "ON":
-                # If the fan was ON, simulate an increase in temperature
-                batteries_samples[battery_id].mos_temperature = [temp - 10 for temp in sample.mos_temperature]
-            elif fan_statuses[battery_id] == "OFF":
-                # If the fan was OFF, simulate a decrease in temperature
-                batteries_samples[battery_id].mos_temperature = [temp + 10 for temp in sample.mos_temperature]
-
-            await asyncio.sleep(5)  # Adjust sleep duration as needed
-        except:
-            break
-            # Close all relays before exit
-    command = bytes([0x01, 0x0F, 0x00, 0x00, 0x00, 0x08, 0x01, 0x00])
-    crc = JbdBms.modbus_crc(command)
-    modbus_frame = command + crc.to_bytes(2, byteorder='little')
-    await mock_serial.serial.write_async(modbus_frame)
-    print("Closing all relays...")
-    mock_serial.disconnect()
-    print("Disconnected from serial.")
-   """
-    
+    mock_serial = JbdBms(port = "COM9")
     await mock_serial.connect()
     while True:
         a = await mock_serial.fetch_basic()

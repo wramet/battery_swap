@@ -19,20 +19,14 @@ class BmsSample:
     def __str__(self):
         return str(vars(self))
         
-        
-
     def to_dict(self):
-        # Initialize the result dictionary
         result = {}
-        
-        # Include only initialized values
         for key, value in vars(self).items():
             if key == 'switches':
                 continue
             if value is not None and not (isinstance(value, float) and math.isnan(value)):
                 result[key] = value
         
-        # Handle mos_temperature separately to enumerate them
         if 'mos_temperature' in result:
             mos_temps = result.pop('mos_temperature')
             for i, temp in enumerate(mos_temps, start=1):

@@ -1,6 +1,5 @@
 import asyncio
 import json
-import re
 import signal
 from typing import Dict, List
 from math import isnan
@@ -25,10 +24,10 @@ class BssStation:
         self.batteries_samples: Dict[int, BmsSample] = {}
         self.batteries_voltages: Dict[int, List] = {}
         self.serial_battery = JbdBms(**kwargs['serial_battery_config'])
-        #self.serial_control = aioserial.AioSerial(**kwargs['serial_control_config'])
+        self.serial_control = aioserial.AioSerial(**kwargs['serial_control_config'])
         self.lock = asyncio.Lock()
         self.logger = logger
-        self.sink = InfluxDBSink(**kwargs['sink_config'])
+        self.sink = InfluxDBSink()
         self.charging_battery = {}
         self.update_event = asyncio.Event()
         #self.fan_statuses = {battery_id: "OFF" for battery_id in range(1, 11)}
@@ -57,17 +56,16 @@ class BssStation:
                     await self.sink.publish_voltage(self.batteries_voltages)
                 except Exception as e:
                     self.logger.error(f"Error publishing data to InfluxDB: {e}")
-            # Wait for the event to be set or for the timeout
+
             try:
                 await asyncio.wait_for(self.update_event.wait(), timeout=10)
             except asyncio.TimeoutError:
-                pass  # Timeout occurred, proceed with the next iteration
+                pass 
             finally:
-                self.update_event.clear()  # Reset the event for the next iteration
+                self.update_event.clear() 
             if shutdown:  
                 break
-
-    """    
+  
     async def listen_controllino(self):
         while not shutdown:
             self.charging_battery = {id: sample for id, sample in self.batteries_samples.items() if not isnan(sample.voltage)}
@@ -77,9 +75,7 @@ class BssStation:
                 await self.handle_message(message)
             if shutdown: 
                 break
-            """
 
-    """    
     async def handle_message(self, message: str):
         async with self.lock:
             match = re.search(r'Limit switch (\d+) activated', message)
@@ -118,7 +114,7 @@ class BssStation:
         except Exception as e:
             self.logger.error(f"Failed to remove battery: {e}")
 
-    async def control_fan(self):
+    """async def control_fan(self):
         while not shutdown:
             for battery_id, sample in self.charging_battery.items():
                 max_temp = max(sample.mos_temperature) if sample.mos_temperature else None
@@ -140,15 +136,14 @@ class BssStation:
 
             await asyncio.sleep(30)  # Properly await the sleep coroutine
             if shutdown: 
-                break
-            """
+                break"""
 
 
     async def main(self):
         fetch_log_task = asyncio.create_task(self.fetch_and_log_battery_loop())
-        #listen_task = asyncio.create_task(self.listen_controllino())
-        #uvicorn_task = asyncio.create_task(start_uvicorn())
-        #react_task = asyncio.create_task(start_react_dev_server())
+        listen_task = asyncio.create_task(self.listen_controllino())
+        uvicorn_task = asyncio.create_task(start_uvicorn())
+        react_task = asyncio.create_task(start_react_dev_server())
         #fan_task = asyncio.create_task(self.control_fan())
         await asyncio.gather(fetch_log_task)
 
@@ -169,7 +164,7 @@ async def start_uvicorn():
     cmd,
     stdout=asyncio.subprocess.PIPE,
     stderr=asyncio.subprocess.PIPE,
-    cwd=r'/home/pi/projects/bss-station'
+    cwd=r'D:\Batterry_swap\BMS'
 )
 
     # Logging stdout and stderr
@@ -195,16 +190,12 @@ react_process = None
 
 async def start_react_dev_server():
     global react_process
-    
-    # Run 'npm run dev' or similar script to start the React development server
     react_process = await asyncio.create_subprocess_shell(
     'npm run dev',
     stdout=asyncio.subprocess.PIPE,
     stderr=asyncio.subprocess.PIPE,
-    cwd=r'/home/pi/projects/bss-React_web'
+    cwd=r'D:\dashboard\material-tailwind-dashboard-react'
 )
-
-    # Optionally, log stdout and stderr from the React development server
     async for line in react_process.stdout:
         print("REACT STDOUT:", line.decode().strip())
     async for line in react_process.stderr:
@@ -221,8 +212,7 @@ async def shutdown_react_dev_server():
 
 
 
-async def main():
-      
+async def main(): 
     try:
         with open('config.json', 'r') as config_file:
             config = json.load(config_file)
