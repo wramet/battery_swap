@@ -1,4 +1,2 @@
 __pycache__/
-*.log
 config.json
-.DS_Store
